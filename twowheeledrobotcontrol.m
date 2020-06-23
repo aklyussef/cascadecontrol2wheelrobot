@@ -52,7 +52,7 @@ D=[0,0]';
 Ts=0.01;
 %sys=ss(A,B,C,D,Ts,'StateName',{'vel','acc','p_ang','p_ang_vel'},'InputName','Force');
 %step(sys);
-%[NUM,DEN] = ss2tf(A,B,C,D);
+[NUM,DEN] = ss2tf(A,B,C,D);
 %set sampling time and
 Fs=100;
 dt=1/Fs;
@@ -84,15 +84,27 @@ F=[ r/2, r/2;
 %% Define Cascaded controller Parameters
 open_system('twowheeledrobot')
 %Controller1
-PID_P1=15;
-PID_I1=5;
-PID_D1=8;
+PID_P1=20;
+PID_I1=0.01;
+PID_D1=0.9;
 PID_N1=20;
-
+%Controller2
+PID_P2=15;
+PID_I2=50;
+PID_D2=10;
+PID_N2=20;
+%Controller3
+PID_P3=15;
+PID_I3=50;
+PID_D3=80;
+PID_N3=20;
 %check the setpoint behaviour of the control system
 %set initial and final values of the step input
 i_value=0;
-ref_value=0;
+ref_value=0.1;
+
+i_value1=0;
+ref_value1=0;
 sim('twowheeledrobot')
 
 figure(1)
