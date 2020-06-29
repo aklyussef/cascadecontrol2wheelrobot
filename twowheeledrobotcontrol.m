@@ -3,23 +3,6 @@ clear;clc;
 LineWidth=1;
 
 %% Model Process
-%i = armature current
-%K = constant factor
-%T = torque
-% T = K*i && K*Ò
-%JÖ = K*i - t_a 
-%J= moment of inertia of rotor
-% t_a is torque applied to shaft
-%R electrical resistance & V voltage applied
-% R*i = V - K*Ò
-% H force applied to wheels H_f friction force I_w moment of inertia of
-% wheel
-% r wheel radius
-% H_f - H = m_w * x''
-% rH_f - 50*t_a = I_w * (Ö/50) = I_w * (x''/r)
-% 2H = m_c * x'' - m_c * l * phi'' * cos(phi) - m_c* l * phi'^2 *sin(phi)
-% [x' x'' phi' phi'']' = X
-% X = A*X + B*u
 
 % State Space model parameters
 K = 0.24;%Nm/A
@@ -62,21 +45,7 @@ u = [1 zeros(1,N-1)];
 X=[0;0;1.15;0];
 y = [zeros(1,N);
     zeros(1,N)];
-% for j = 1:N
-%     y(:,j) = C*X + D*u(j);
-%     X=A*X+B*u(j);
-% end
-% stem(t,y(1,:),'filled');
-% ylabel('position');
-% xlabel('t');
-% stem(t,y(2,:),'filled');
-% xlabel('pitch_angle');
-% xlabel('t');
-% Get a transfer function for the vehicle position & pitch
-% [NUM,DEN] = ss2tf(A,B,C,D);
 
-%linear and angular velocity derivation
-% [v;w] = F*[Ó_R;Ó_L]
 F=[ r/2, r/2;
     r/l, -r/l];
 
@@ -84,31 +53,31 @@ F=[ r/2, r/2;
 %% Define Cascaded controller Parameters
 open_system('twowheeledrobot')
 %Controller1
-PID_P1=20;
+PID_P1=0.1;
 PID_I1=0.01;
 PID_D1=0.9;
 PID_N1=20;
 %Controller2
-PID_P2=15;
-PID_I2=50;
+PID_P2=0.1;
+PID_I2=0.05;
 PID_D2=10;
-PID_N2=20;
+PID_N2=200;
 %Controller3
-PID_P3=15;
-PID_I3=50;
-PID_D3=80;
+PID_P3=10;
+PID_I3=0.05;
+PID_D3=10;
 PID_N3=20;
 %check the setpoint behaviour of the control system
 %set initial and final values of the step input
 i_value=0;
-ref_value=0.1;
+ref_value=0;
 
 i_value1=0;
 ref_value1=0;
 sim('twowheeledrobot')
 
 figure(1)
-plot(ans.position.Time,ans.position.Data,'b','LineWidth',LineWidth)
+plot(ans.Position.Time,ans.Position.Data,'b','LineWidth',LineWidth)
 grid on
 title('Position Response')
 ylabel('position (cm)')
@@ -120,33 +89,4 @@ grid on
 title('Pitch Angle Response')
 ylabel('pitch angle (deg)')
 xlabel('time (s)')
-% 
-% 
-% %check the inner disturbance behaviour of the control system
-% setvalue=0;
-% inner_disturbance=1;
-% outer_disturbance=0;
-% sim('twowheeledrobot')
-% 
-% figure(5)
-% plot(ans.out_single_loop.Time,ans.out_single_loop.Data,'r',ans.out_cascaded.Time,ans.out_cascaded.Data,'b',ans.setpoint.Time,ans.setpoint.Data,'k','LineWidth',LineWidth)
-% grid on
-% title('inner disturbance')
-% ylabel('Output')
-% xlabel('Time')
-% legend('single loop','cascaded','setpoint')
-% 
-% %check the outer disturbance behaviour of the control system
-% setvalue=0;
-% inner_disturbance=0;
-% outer_disturbance=1;
-% sim('twowheeledrobot')
-% 
-% figure(6)
-% plot(ans.out_single_loop.Time,ans.out_single_loop.Data,'r',ans.out_cascaded.Time,ans.out_cascaded.Data,'b',ans.setpoint.Time,ans.setpoint.Data,'k','LineWidth',LineWidth)
-% grid on
-% title('outer disturbance')
-% ylabel('Output')
-% xlabel('Time')
-% legend('single loop','cascaded','setpoint')
-% 
+
